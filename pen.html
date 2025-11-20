@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPen | پیکسل پین</title>
+
+    <!-- سئو -->
+    <meta name="description" content="PixelPen (پیکسل پین) بهترین ابزار آنلاین برای ساخت پیکسل آرت، نقاشی پیکسلی و دانلود خروجی PNG با کیفیت بالا.">
+    <meta name="keywords" content="pixel art, پیکسل آرت, نقاشی پیکسلی, ساخت پیکسل آرت, pixelpen, پیکسل پین">
+
+    <!-- OpenGraph -->
+    <meta property="og:title" content="PixelPen — سازنده حرفه‌ای پیکسل آرت">
+    <meta property="og:description" content="بساز، رنگ کن، دانلود کن — همه چیز در PixelPen">
+    <meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background: #151515;
+            color: #fff;
+            font-family: 'Vazirmatn', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        header {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            background: #202020;
+            margin-bottom: 25px;
+            box-shadow: 0 0 10px #000;
+        }
+
+        header h1 {
+            color: #4dd0e1;
+            margin: 0;
+            font-size: 30px;
+        }
+
+        #controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 18px;
+            background: #4dd0e1;
+            border: none;
+            color: #000;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #00bcd4;
+        }
+
+        #colorPicker {
+            width: 50px;
+            height: 50px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #gridContainer {
+            background: #2b2b2b;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #000;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(32, 18px);
+            grid-template-rows: repeat(32, 18px);
+            gap: 1px;
+        }
+
+        .pixel {
+            width: 18px;
+            height: 18px;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+       
+        @media (max-width: 600px) {
+            #grid {
+                grid-template-columns: repeat(32, 12px);
+                grid-template-rows: repeat(32, 12px);
+            }
+            .pixel {
+                width: 12px;
+                height: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🎨 PixelPen — پیکسل پین</h1>
+    <p>بهترین ابزار برای ساخت پیکسل ارت با خروجیPNG</p>
+</header>
+
+<div id="controls">
+    <input type="color" id="colorPicker" value="#000000">
+    <button id="eraser"  style="font-family: 'Vazirmatn', sans-serif;">پاک‌کن</button>
+    <button id="clear"   style="font-family: 'Vazirmatn', sans-serif;">پاک کردن صفحه</button>
+    <button id="download" style="font-family: 'Vazirmatn', sans-serif;">دانلود با کیفیت بالا</button>
+</div>
+
+<div id="gridContainer">
+    <div id="grid"></div>
+</div>
+
+<script>
+    const grid = document.getElementById('grid');
+    const colorPicker = document.getElementById('colorPicker');
+    let currentColor = "#000000";
+
+    colorPicker.addEventListener("input", () => {
+        currentColor = colorPicker.value;
+    });
+
+    
+    for (let i = 0; i < 32 * 32; i++) {
+        const pixel = document.createElement("div");
+        pixel.classList.add("pixel");
+
+        pixel.addEventListener("click", () => {
+            pixel.style.backgroundColor = currentColor;
+        });
+
+        grid.appendChild(pixel);
+    }
+
+   
+    document.getElementById("eraser").onclick = () => {
+        currentColor = "#ffffff";
+    };
+
+  
+    document.getElementById("clear").onclick = () => {
+        document.querySelectorAll(".pixel").forEach(p => {
+            p.style.backgroundColor = "#ffffff";
+        });
+    };
+
+    
+    document.getElementById("download").onclick = () => {
+        const scale = 10; 
+        const size = 32;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = size * scale;
+        canvas.height = size * scale;
+
+        const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false; 
+
+        const pixels = document.querySelectorAll(".pixel");
+
+        pixels.forEach((pixel, index) => {
+            const x = index % size;
+            const y = Math.floor(index / size);
+            const color = pixel.style.backgroundColor || "#ffffff";
+
+            ctx.fillStyle = color;
+            ctx.fillRect(x * scale, y * scale, scale, scale);
+        });
+
+        const link = document.createElement("a");
+        link.download = "pixelpen_hd.png";
+        link.href = canvas.toDataURL();
+        link.click();
+    };
+</script>
+
+</body>
+</html>
